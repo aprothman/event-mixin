@@ -43,7 +43,6 @@ describe('Event Mixin Initialization', function () {
     class Bottom extends EventMixin(Top) {}
     const bot = new Bottom();
 
-    // expect(bot).to.include.all.keys(eventMethodNames); // chai bug makes this not work
     eventMethodNames.forEach((methodName) => {
       expect(bot).to.have.property(methodName);
     });
@@ -53,7 +52,6 @@ describe('Event Mixin Initialization', function () {
     class Bottom extends EventMixin() {}
     const bot = new Bottom();
 
-    // expect(bot).to.include.all.keys(eventMethodNames); // chai bug makes this not work
     eventMethodNames.forEach((methodName) => {
       expect(bot).to.have.property(methodName);
     });
