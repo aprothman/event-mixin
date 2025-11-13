@@ -1,47 +1,52 @@
-import MulticastEvent from './MulticastEvent.ts';
 import EventProperty from './EventProperty.ts';
 import IEventHost from '../type/IEventHost.ts';
 import type { EventCallback, ClassConstructor } from '../type/types.ts';
 
-const events: unique symbol = Symbol('events');
-const eventKey: unique symbol = Symbol('eventKey');
-
 // eslint-disable-next-line max-len
 export default (superClass: ClassConstructor = Object) => class EventMixin extends superClass implements IEventHost {
-  // hidden property containing event implementations
-  [events]: Record<symbol, MulticastEvent<any>> = {};
-
+  /**
+   * Set up a named event property ready to receive event listeners.
+   * @param name the name of the event being registered
+   */
   registerEvent<TEventArg>(name: string) {
-    const eventNameSymbol = Symbol.for(name);
-
-    // event system implementation
-    this[events][eventNameSymbol] = new MulticastEvent<TEventArg>(eventNameSymbol);
-
-    // named event property
-    this[name] = new EventProperty<TEventArg>(this, eventKey, eventNameSymbol);
+    this[name] = new EventProperty<TEventArg>();
   }
 
+  /**
+   * Emit an event, executing any registered event listener callbacks.
+   * @param eventProperty the property for the event being emitted
+   * @param arg the arg passed to consumers of the event
+   */
   emit<TEventArg>(eventProperty: EventProperty<TEventArg>, arg: TEventArg) {
-    const eventSymbol = eventProperty[eventKey];
-    const event: MulticastEvent<TEventArg> = this[events][eventSymbol];
-    event.raiseEvent(arg);
+    eventProperty.emit(arg);
   }
 
+  /**
+   * Register a listener callback to be run when an event is emitted.
+   * @param eventProperty the property for the event being listened for
+   * @param callback the listener to be run when the event is emitted
+   */
   on<TEventArg>(eventProperty: EventProperty<TEventArg>, callback: EventCallback<TEventArg>) {
-    const eventSymbol = eventProperty[eventKey];
-    const event: MulticastEvent<TEventArg> = this[events][eventSymbol];
-    event.registerCallback(callback);
+    eventProperty.addListener(callback);
   }
 
+  /**
+   * Register a listener callback to be run the next time the event is emitted.
+   * After it is run once, the callback is removed from the list of listeners.
+   * @param eventProperty the property for the event being listened for
+   * @param callback the listener to be run when the event is emitted
+   */
   once<TEventArg>(eventProperty: EventProperty<TEventArg>, callback: EventCallback<TEventArg>) {
-    const eventSymbol = eventProperty[eventKey];
-    const event: MulticastEvent<TEventArg> = this[events][eventSymbol];
-    event.registerCallbackWithRemoval(callback);
+    eventProperty.addOneTimeListener(callback);
   }
 
+  /**
+   * Unregister a lisener callback so that it will not be run when the event is emitted.
+   * @param eventProperty the property for the event
+   * @param callback the listener to be removed from the list of event listeners
+   * @returns true if the callback is found and removed
+   */
   off<TEventArg>(eventProperty: EventProperty<TEventArg>, callback: EventCallback<TEventArg>) {
-    const eventSymbol = eventProperty[eventKey];
-    const event: MulticastEvent<TEventArg> = this[events][eventSymbol];
-    return event.unregisterCallback(callback);
+    return eventProperty.removeListener(callback);
   }
 };

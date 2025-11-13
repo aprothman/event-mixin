@@ -5,8 +5,6 @@ export default class MulticastEvent<TEventArg> {
 
   removeList: EventCallback<TEventArg>[] = [];
 
-  constructor(public name: symbol) { }
-
   /**
    * Add to the list of callbacks for this event
    * @param callback function to be called when the event is raised

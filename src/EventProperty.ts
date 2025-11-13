@@ -1,11 +1,13 @@
-import type IEventHost from '../type/IEventHost.ts';
+import MulticastEvent from './MulticastEvent.ts';
 import type { EventCallback } from '../type/types.ts';
+
+const event: unique symbol = Symbol('event');
 
 /**
  * An object that represents a specific named event as a property on an event consumer object.
  */
 export default class EventProperty<TEventArg> {
-  [eventKey: symbol]: symbol;
+  [event]: MulticastEvent<TEventArg>;
 
   /**
    * Emit the event, calling each registered listener.
@@ -32,23 +34,23 @@ export default class EventProperty<TEventArg> {
    */
   removeListener: (callback: EventCallback<TEventArg>) => boolean;
 
-  constructor(eventHost: IEventHost, eventKey: symbol, eventSymbol: symbol) {
-    this[eventKey] = eventSymbol;
+  constructor() {
+    this[event] = new MulticastEvent<TEventArg>();
 
     this.emit = (arg: TEventArg) => {
-      eventHost.emit(this, arg);
+      this[event].raiseEvent(arg);
     };
 
     this.addListener = (callback: EventCallback<TEventArg>) => {
-      eventHost.on(this, callback);
+      this[event].registerCallback(callback);
     };
 
     this.addOneTimeListener = (callback: EventCallback<TEventArg>) => {
-      eventHost.once(this, callback);
+      this[event].registerCallbackWithRemoval(callback);
     };
 
     this.removeListener = (callback: EventCallback<TEventArg>) => {
-      return eventHost.off(this, callback);
+      return this[event].unregisterCallback(callback);
     };
   }
 }
