@@ -32,23 +32,23 @@ export default class EventProperty<TEventArg> {
    */
   removeListener: (callback: EventCallback<TEventArg>) => boolean;
 
-  constructor(eventConsumer: IEventHost, eventKey: symbol, eventSymbol: symbol) {
+  constructor(eventHost: IEventHost, eventKey: symbol, eventSymbol: symbol) {
     this[eventKey] = eventSymbol;
 
     this.emit = (arg: TEventArg) => {
-      eventConsumer.emit(this, arg);
+      eventHost.emit(this, arg);
     };
 
     this.addListener = (callback: EventCallback<TEventArg>) => {
-      eventConsumer.on(this, callback);
+      eventHost.on(this, callback);
     };
 
     this.addOneTimeListener = (callback: EventCallback<TEventArg>) => {
-      eventConsumer.once(this, callback);
+      eventHost.once(this, callback);
     };
 
     this.removeListener = (callback: EventCallback<TEventArg>) => {
-      return eventConsumer.off(this, callback);
+      return eventHost.off(this, callback);
     };
   }
 }
