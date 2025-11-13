@@ -11,37 +11,37 @@ export default (superClass: ClassConstructor = Object) => class EventMixin exten
   // hidden property containing event implementations
   [events]: Record<symbol, MulticastEvent<any>> = {};
 
-  registerEvent<T>(name: string) {
+  registerEvent<TEventArg>(name: string) {
     const eventNameSymbol = Symbol.for(name);
 
     // event system implementation
-    this[events][eventNameSymbol] = new MulticastEvent<T>(eventNameSymbol);
+    this[events][eventNameSymbol] = new MulticastEvent<TEventArg>(eventNameSymbol);
 
     // named event property
-    this[name] = new EventProperty<T>(this, eventKey, eventNameSymbol);
+    this[name] = new EventProperty<TEventArg>(this, eventKey, eventNameSymbol);
   }
 
-  emit<T>(eventProperty: EventProperty<T>, arg: T) {
+  emit<TEventArg>(eventProperty: EventProperty<TEventArg>, arg: TEventArg) {
     const eventSymbol = eventProperty[eventKey];
-    const event: MulticastEvent<T> = this[events][eventSymbol];
+    const event: MulticastEvent<TEventArg> = this[events][eventSymbol];
     event.raiseEvent(arg);
   }
 
-  on<T>(eventProperty: EventProperty<T>, callback: EventCallback<T>) {
+  on<TEventArg>(eventProperty: EventProperty<TEventArg>, callback: EventCallback<TEventArg>) {
     const eventSymbol = eventProperty[eventKey];
-    const event: MulticastEvent<T> = this[events][eventSymbol];
+    const event: MulticastEvent<TEventArg> = this[events][eventSymbol];
     event.registerCallback(callback);
   }
 
-  once<T>(eventProperty: EventProperty<T>, callback: EventCallback<T>) {
+  once<TEventArg>(eventProperty: EventProperty<TEventArg>, callback: EventCallback<TEventArg>) {
     const eventSymbol = eventProperty[eventKey];
-    const event: MulticastEvent<T> = this[events][eventSymbol];
+    const event: MulticastEvent<TEventArg> = this[events][eventSymbol];
     event.registerCallbackWithRemoval(callback);
   }
 
-  off<T>(eventProperty: EventProperty<T>, callback: EventCallback<T>) {
+  off<TEventArg>(eventProperty: EventProperty<TEventArg>, callback: EventCallback<TEventArg>) {
     const eventSymbol = eventProperty[eventKey];
-    const event: MulticastEvent<T> = this[events][eventSymbol];
+    const event: MulticastEvent<TEventArg> = this[events][eventSymbol];
     return event.unregisterCallback(callback);
   }
 };

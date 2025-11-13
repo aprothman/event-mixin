@@ -1,9 +1,9 @@
 import type { EventCallback } from '../type/types.ts';
 
-export default class MulticastEvent<T> {
-  callbacks: EventCallback<T>[] = [];
+export default class MulticastEvent<TEventArg> {
+  callbacks: EventCallback<TEventArg>[] = [];
 
-  removeList: EventCallback<T>[] = [];
+  removeList: EventCallback<TEventArg>[] = [];
 
   constructor(public name: symbol) { }
 
@@ -11,7 +11,7 @@ export default class MulticastEvent<T> {
    * Add to the list of callbacks for this event
    * @param callback function to be called when the event is raised
    */
-  registerCallback(callback: EventCallback<T>) {
+  registerCallback(callback: EventCallback<TEventArg>) {
     this.callbacks.push(callback);
   }
 
@@ -20,7 +20,7 @@ export default class MulticastEvent<T> {
    * new callback for removal after it is called.
    * @param callback function to be called when the event is raised
    */
-  registerCallbackWithRemoval(callback: EventCallback<T>) {
+  registerCallbackWithRemoval(callback: EventCallback<TEventArg>) {
     this.removeList.push(callback);
     this.callbacks.push(callback);
   }
@@ -31,7 +31,7 @@ export default class MulticastEvent<T> {
    * @param cleanRemoveList if true, additionally remove the function from the removeList
    * @returns true if the callback function was found and removed
    */
-  unregisterCallback(callback: EventCallback<T>, cleanRemoveList = true) {
+  unregisterCallback(callback: EventCallback<TEventArg>, cleanRemoveList = true) {
     if (cleanRemoveList) {
       // first remove it from the removeList
       const removeIndex = this.removeList.indexOf(callback);
@@ -53,7 +53,7 @@ export default class MulticastEvent<T> {
    * Trigger each callback registered for this event.
    * @param arg event argument passed to each callback
    */
-  raiseEvent(arg: T) {
+  raiseEvent(arg: TEventArg) {
     const callList = [...this.callbacks];
 
     callList.forEach((callback) => {

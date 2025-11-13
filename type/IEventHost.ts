@@ -14,14 +14,14 @@ export default interface IEventHost {
    * @param eventProperty the event property associated with a unique event
    * @param arg event argument passed to each callback
    */
-  emit<T>(eventProperty: EventProperty<T>, arg: T): void;
+  emit<TEventArg>(eventProperty: EventProperty<TEventArg>, arg: TEventArg): void;
 
   /**
    * Add a new callback to the list of listeners for an event.
    * @param eventProperty the event property associated with a unique event
    * @param callback the listener function to register for the event
    */
-  on<T>(eventProperty: EventProperty<T>, callback: EventCallback<T>): void;
+  on<TEventArg>(eventProperty: EventProperty<TEventArg>, callback: EventCallback<TEventArg>): void;
 
   /**
    * Add a new callback to the list of listeners for an event. This callback
@@ -29,7 +29,7 @@ export default interface IEventHost {
    * @param eventProperty the event property associated with a unique event
    * @param callback the listener function to register for the event
    */
-  once<T>(eventProperty: EventProperty<T>, callback: EventCallback<T>): void;
+  once<TEventArg>(eventProperty: EventProperty<TEventArg>, callback: EventCallback<TEventArg>): void;
 
   /**
    * If the callback argument is registered as a listener for the given event, remove it.
@@ -37,5 +37,5 @@ export default interface IEventHost {
    * @param callback function previously registered as a listener
    * @returns true if the callback function was found and removed
    */
-  off<T>(eventProperty: EventProperty<T>, callback: EventCallback<T>): boolean;
+  off<TEventArg>(eventProperty: EventProperty<TEventArg>, callback: EventCallback<TEventArg>): boolean;
 }
