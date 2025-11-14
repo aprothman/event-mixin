@@ -63,7 +63,7 @@ describe('Event Behavior', function () {
     const bot = new Minimal();
     bot.registerEvent('DataReceived');
     
-    expect(bot).to.have.own.property('DataReceived').with.instanceOf(EventProperty);
+    expect(bot).to.have.own.property('DataReceived').that.is.an.instanceOf(EventProperty);
   });
 
   it('registerEvent(), pre-declared, initializes named event property', function () {
@@ -77,7 +77,7 @@ describe('Event Behavior', function () {
     }
     const bot = new Consumer();
 
-    expect(bot.DataReceived).to.be.instanceOf(EventProperty<DataEventArg>);
+    expect(bot.DataReceived).to.be.an.instanceOf(EventProperty<DataEventArg>);
   });
 
   it('emit(), listener not registered, does not throw', function () {
