@@ -7,7 +7,9 @@ const event: unique symbol = Symbol('event');
  * An object that represents a specific named event as a property on an event consumer object.
  */
 export default class EventProperty<TEventArg> {
-  [event]: MulticastEvent<TEventArg>;
+  // since the property name is a symbol, this object won't
+  // show in ide type hinting lists
+  [event] = new MulticastEvent<TEventArg>();
 
   /**
    * Emit the event, calling each registered listener.
@@ -35,8 +37,6 @@ export default class EventProperty<TEventArg> {
   removeListener: (callback: EventCallback<TEventArg>) => boolean;
 
   constructor() {
-    this[event] = new MulticastEvent<TEventArg>();
-
     this.emit = (arg: TEventArg) => {
       this[event].raiseEvent(arg);
     };
